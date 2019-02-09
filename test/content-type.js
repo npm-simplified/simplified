@@ -6,7 +6,7 @@ const assert = require('chai').assert,
 require('../lib/load');
 
 describe('Content type queries', () => {
-    it('Should create new content type table', async function() {
+    it('Should create new content type table.', async function() {
         let done = await dbManager.createTable( 'content_type', {
             name: {
                 type: 'str',
@@ -73,7 +73,7 @@ describe('Content type queries', () => {
         return done;
     });
 
-    it('Should drop content type table', async function() {
+    it('Should drop content type table.', async function() {
         let done = await dbManager.dropTable('content_type');
 
         assert.isTrue(done);
