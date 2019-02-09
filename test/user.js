@@ -30,6 +30,11 @@ describe('User Queries', () => {
                 length: 255,
                 required: true
             },
+            group: {
+                type: 'str',
+                length: 60,
+                required: true
+            },
             registered: {
                 type: 'timestamp',
                 default: 'CURRENT_TIMESTAMP'
@@ -63,29 +68,62 @@ describe('User Queries', () => {
         return done;
     });
 
+    it('Should create user group table', async function() {
+        let done = await dbManager.createTable( 'user_group', {
+            name: {
+                type: 'str',
+                length: 60,
+                required: true,
+                index: true
+            },
+            caps: {
+                type: 'object'
+            }
+        });
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should add user group name = subscriber, author', async function() {
+        let done = await setUserGroup( 'subscriber' );
+
+        assert.isTrue(done);
+
+        done = await setUserGroup( 'author' );
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
     let userId, user2, user3;
 
     it('Should add new users', async function() {
-        userId = await addUser({
+        userId = await setUser({
             display: 'irene',
             email: 'irene@local.dev',
-            pass: 'Webdevenquiry@21'
+            pass: 'Webdevenquiry@21',
+            group: 'subscriber'
         });
 
         assert.isNumber(userId);
 
-        user2 = await addUser({
+        user2 = await setUser({
             display: 'natasha',
             email: 'natasha@local.dev',
-            pass: 12346
+            pass: 12346,
+            group: 'author'
         });
 
         assert.isNumber(user2);
 
-        user3 = await addUser({
+        user3 = await setUser({
             display: 'ellen',
             email: 'ellen@local.dev',
-            pass: 'iamme'
+            pass: 'iamme',
+            group: 'subscriber'
         });
 
         assert.isNumber(user3);
@@ -103,7 +141,7 @@ describe('User Queries', () => {
     });
 
     it('Should update user data', async function() {
-        let done = await updateUserData({
+        let done = await setUser({
             ID: userId,
             email: 'irene1@local.dev'
         });
@@ -169,6 +207,22 @@ describe('User Queries', () => {
         return meta;
     });
 
+    it('Should get users where group = subscriber', async function() {
+        let users = await usersQuery({group: 'subscriber'});
+
+        assert.equal( users.users.length, 2 );
+
+        return users;
+    });
+
+    it('Should get users that are a member of group = subscriber, author', async function() {
+        let users = await usersQuery({group__in: ['subscriber', 'author']});
+
+        assert.equal( users.users.length, 3 );
+
+        return users;
+    });
+
     it('Should get users with filters', async function() {
         let users = await usersQuery({
             meta: {
@@ -176,8 +230,6 @@ describe('User Queries', () => {
                 value: 'subscriber'
             }
         });
-
-        console.log(users);
 
         assert.equal( users.users.length, 2 );
 
@@ -195,11 +247,23 @@ describe('User Queries', () => {
     it('Should drop user meta table', async function() {
         let done = await dbManager.dropTable('user_meta');
 
+        assert.isTrue( ! isError(done) );
+
+        return done;
+    });
+
+    it('Should drop user group table', async function() {
+        let done = await dbManager.dropTable( 'user_group' );
+
+        assert.isTrue( !isError(done) );
+
         return done;
     });
 
     it('Should drop users table', async function() {
         let done = await dbManager.dropTable('users');
+
+        assert.isTrue( ! isError(done) );
 
         return done;
     });
