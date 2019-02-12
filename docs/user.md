@@ -1,4 +1,4 @@
-####async: insertUser( object: *userData* )
+#### async: insertUser( object: *userData* )
 
 Insert new user into the database.
 
