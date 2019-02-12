@@ -20,7 +20,7 @@ Require. The human readable password of the user. Primarily use in login authent
 
 Required. The name of the group assign to the user. Note that the assign group name must exist from the database. Otherwise will return an error.
 
-#### returns:
+#### @returns:
 
 Returns new user id on success or an error object on failure.
 
@@ -45,8 +45,8 @@ if ( isError(userId) ) {
 
 Update user's data in the database.
 
-Parameters:
--
+#### Parameters:
+
 -- (int) *ID*
 
 Required. The id of the user to update the data to.
@@ -67,13 +67,11 @@ Optional. Use only when updating the user's password.
 
 Optional. Use only when updating the user's group.
 
-@returns:
--
+#### @returns:
 
 Returns user ID on success or error object on failure.
 
-Usage:
--
+#### Usage:
 
 ~~~~
 let userId = await updateUser({
@@ -89,26 +87,27 @@ if ( isError(userId) ) {
 }
 ~~~~
 
-####async: getUserBy( string: column, string|int: value )
-
-Get the user's database from the database base on the given table column name and value.
-
-Parameters:
+async: getUserBy( string: column, string|int: value )
 -
+Retrieve user's data from the database base on the given column name and value.
+
+### Parameters:
+
 -- (string) `column`
 
-The name of user's table column to match to. Allowed column names are **ID** and **email**.
+The users table column name, use to match the query.
+*Note: Only column names **ID** and **email** are allowed.*
 
 -- (string|int) `value`
 
-The value of the given column name to match to the database.
+The value of the given column name.
 
-@returns:
--
-Returns an object container the user's data on success or an error object.
+#### @returns:
 
-Usage:
--
+Returns user's data object on success or error.
+
+#### Usage:
+
 ~~~~
 let user = await getUserBy( 'email', 'natasha@awesomesite.com' );
 
@@ -120,22 +119,21 @@ if ( isError(user) ) {
 }
 ~~~~
 
-####async: getUser( int: ID )
-
-A convenient way to get the user's data from the database using an id.
-
-Parameters:
+async: getUser( int: ID )
 -
+A convenient way to get the user's data from the database using the user's id.
+
+#### Parameters:
+
 -- (int) `ID`
 
 The id of the user to get the data to.
 
-@returns:
--
-Returns an object of user's data on success or an error object.
+#### @returns:
 
-Usage:
--
+Returns user's data object on success or an error object.
+
+#### Usage:
 ~~~~
 let user = await getUser(1);
 
@@ -144,25 +142,21 @@ if ( isError(user) ) {
     console.log(user.message);
     return;
 }
-
-// Do something to the user object here
-.....
 ~~~~
 
-####async: dropUser(ID)
-
+async: dropUser(ID)
+-
 Remove user from the database.
 
-Parameters:
--
+#### Parameters:
 
 -- (int) `ID`
 
-The id of the user to remove to. Other data such as metadata are also removed from the database.
+The id of the user to remove to.
 
-Usage:
--
+*Note: Other user's data, such as metadata are also removed from the database.*
 
+#### Usage:
 ~~~~
 let deleted = await dropUser(1);
 
@@ -171,50 +165,46 @@ if ( isError(deleted) ) {
     console.log(deleted.message);
     return;
 }
-
-// Continue your stuff here
-....
 ~~~~
 
-####async: usersQuery( object: queryFilters )
-
-Parameters: *queryFilters*
+async: usersQuery( object: queryFilters )
 -
+
+Retrieve users from the database on the given query filters.
+
+#### Parameters: *queryFilters*
 
 -- (string) `group`
 
-The name of the group users are a member of.
+Optional. The name of the group a user is a member of.
 
 -- (array) `group__in`
 
-A list of user group where a user is a member to any of the given list.
+Optional. An array of user group name where the return users must be a member of.
 
 -- (array) `group__not_in`
 
-A list of user group where a user is not a member of to any of the given list.
+Optional. An array of user group name where the return users must not be a member of.
 
 -- (array) `within`
-A list user IDs the return results are base upon.
+Optional. An array of user IDs that the return results are base at.
 
 -- (array) `not__within`
 
-A list of user IDs where user's ID is not among the given list.
+Optional. An array of user IDs where the return users id must not be among the list.
 
 -- (int) `page`
 
-The page number to base the results at.
+Optional. The page number to base the return results at.
 
 -- (int) `perPage`
 
-The number of users to return in the query.
+Optional. The number of users to return in the query.
 
-@returns:
--
-Returns an object containing the total number of users found and an array of user object .
+#### @returns:
+Returns an object containing the total number of users found in the query and an array of user object.
 
-Usage:
--
-
+#### Usage:
 ~~~~
 let query = await usersQuery({ group: 'helper' });
 
@@ -226,43 +216,42 @@ if ( query.foundItems > 0 ) {
 }
 ~~~~
 
-####async: getUsers( object: queryFilter )
+async: getUsers( object: queryFilter )
+-
 A convenient way to get the list of users from the database.
 
-Parameters: *queryFilter*
+#### Parameters: *queryFilter*
 -- (string) `group`
 
-The name of the group users are a member of.
+Optional. The name of the group a user is a member of.
 
 -- (array) `group__in`
 
-A list of user group where a user is a member to any of the given list.
+Optional. An array of user group name where the return users must be a member of.
 
 -- (array) `group__not_in`
 
-A list of user group where a user is not a member of to any of the given list.
+Optional. An array of user group name where the return users must not be a member of.
 
 -- (array) `within`
-A list user IDs the return results are base upon.
+Optional. An array of user IDs that the return results are base at.
 
 -- (array) `not__within`
 
-A list of user IDs where user's ID is not among the given list.
+Optional. An array of user IDs where the return users id must not be among the list.
 
 -- (int) `page`
 
-The page number to base the results at.
+Optional. The page number to base the return results at.
 
 -- (int) `perPage`
 
-The number of users to return in the query.
+Optional. The number of users to return in the query.
 
-@returns:
--
-Returns an array of user object.
+#### @returns:
+Returns an array containing user object.
 
-Usage:
--
+#### Usage:
 ~~~~
 let users = await getUsers();
 
@@ -270,12 +259,12 @@ let users = await getUsers();
 console.log(users.length);
 ~~~~
 
-####async: validateUser( string: email, string: pass )
-
-Validate user prior to login.
-
-Parameters:
+async: validateUser( string: email, string: pass )
 -
+Helper function use to validate a user prior to login.
+
+#### Parameters:
+
 -- (string) `email`
 
 Required. The email address use during user insertion.
@@ -284,12 +273,11 @@ Required. The email address use during user insertion.
 
 Required. The human readable password of the user to validate to.
 
-@returns:
--
+#### @returns:
+
 Returns an object container the user's data on success or an error object.
 
-Usage:
--
+#### Usage:
 ~~~~
 let user = await validateUser( 'natasha@awesomemail.com', '123456' );
 
@@ -298,17 +286,13 @@ if ( isError(user) ) {
     console.log(user.message);
     return;
 }
-
-// Continue here
-...
 ~~~~
 
-####async: loginUser( string: email, string: pass )
-
-Validate and login user.
-
-Parameters:
+async: loginUser( string: email, string: pass )
 -
+Validate and login a user into the system.
+
+#### Parameters:
 -- (string) `email`
 
 Required. The email address use during user insertion.
@@ -317,14 +301,11 @@ Required. The email address use during user insertion.
 
 Required. The human readable password of the user to validate to.
 
-@returns:
--
-Returns an object container the user's data on success or an error object.
+#### @returns:
 
-*Note: A global variable name `currentUser` will then contain data of the current user.*
+Returns an object containing the user's data on success or an error object.
 
-Usage:
--
+#### Usage:
 ~~~~
 let login = await loginUser( 'natasha@awesomemail.com', '123456' );
 
@@ -334,33 +315,30 @@ if ( isError(login) ) {
     
     return;
 }
-
-// Continue your stuff here
-let {ID} = currentUser.ID;
 ~~~~
 
-####async: logoutUser(void)
+async: logoutUser(void)
+-
+Helper function use for logging out a user from the system.
 
-Use to logout the current user from the system.
-
-#### isUserLoggedIn(void)
+isUserLoggedIn(void)
+-
 
 Check if a user is currently logged in into the system.
 
-Usage:
--
+#### Usage:
 ~~~~
 if ( isUserLoggedIn() ) {
     console.log('User is login.');
 }
 ~~~~
 
-####async: isUserGranted( int: ID, (string|array) perms, any: grantFor ) 
-
+async: isUserGranted( int: ID, (string|array) perms, any: grantFor ) 
+-
 Verify if a user have granted the given permission or any of the given list of permissions.
 
-Parameters:
--
+#### Parameters:
+
 -- (int) `ID`
 
 The id of the user to check the existence of the permission at.
@@ -373,12 +351,10 @@ The type of permission to check if the user have granted at.
 
 An optional parameter use to further validation the user's permission at.
 
-@returns:
--
+#### @returns:
 Returns true on success or false on failure.
 
-Usage:
--
+#### Usage:
 ~~~~
 if ( ! isUserGranted( 1, 'editUser', 5 ) ) {
     // Print warning here
@@ -386,17 +362,13 @@ if ( ! isUserGranted( 1, 'editUser', 5 ) ) {
     
     return;
 }
-
-// Continue editing here
-...
 ~~~~
 
-####async: currentUserCan( string|array: perm, any: grantFor )
-
+async: currentUserCan( string|array: perm, any: grantFor )
+-
 A convenient way to check the current logged in user's granted permissions.
 
-Parameters:
--
+#### Parameters:
 
 -- (string|array) `perm`
 
@@ -406,8 +378,7 @@ The type of permission/s to check against the current user to.
 
 Optional. An additional data use for further validation of the current user's granted permission/s.
 
-Usage:
--
+#### Usage:
 ~~~~
 if ( ! currentUserCan( 'edit-user', 5 ) ) {
     // Print warning here
@@ -415,7 +386,4 @@ if ( ! currentUserCan( 'edit-user', 5 ) ) {
     
     return;
 }
-
-// Continue here
-...
 ~~~~
