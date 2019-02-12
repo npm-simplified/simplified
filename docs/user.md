@@ -20,13 +20,12 @@ Require. The human readable password of the user. Primarily use in login authent
 
 Required. The name of the group assign to the user. Note that the assign group name must exist from the database. Otherwise will return an error.
 
-@returns:
--
+#### returns:
 
-Returns new user id on success or an object containing the error message.
+Returns new user id on success or an error object on failure.
 
-Usage:
--
+#### Usage:
+
 ~~~~
 let userId = await insertUser({
     display: 'natasha',
