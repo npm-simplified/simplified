@@ -4,19 +4,19 @@ async: insertUser( object: *userData* )
 Insert new user into the database.
 
 #### Parameters: *userData*
--- (string) *display*
+-- (string) `display`
 
 Required. The display name of the user.
 
--- (string) *email*
+-- (string) `email`
 
 Required. The email address of the user.
 
--- (string) *pass*
+-- (string) `pass`
 
 Require. The human readable password of the user. Primarily use in login authentication.
 
--- (string) *group*
+-- (string) `group`
 
 Required. The name of the group assign to the user. Note that the assign group name must exist from the database. Otherwise will return an error.
 
@@ -41,29 +41,29 @@ if ( isError(userId) ) {
 }
 ~~~~
 
-####async: updateUser( object: *userData* )
-
+async: updateUser( object: *userData* )
+-
 Update user's data in the database.
 
 #### Parameters:
 
--- (int) *ID*
+-- (int) `ID`
 
 Required. The id of the user to update the data to.
 
--- (string) *display*
+-- (string) `display`
 
 Optional. Use only when updating the user's display name.
 
--- (string) *email*
+-- (string) `email`
 
 Optional. Use only when updating the user's email address.
 
--- (string) *pass*
+-- (string) `pass`
 
 Optional. Use only when updating the user's password.
 
--- (string) *group*
+-- (string) `group`
 
 Optional. Use only when updating the user's group.
 

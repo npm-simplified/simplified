@@ -1,138 +1,115 @@
-####async: insertUserGroup( string: *name*, array: *grants* )
-
+async: insertUserGroup( string: *name*, array: *grants* )
+-
 Insert new user group into the database.
 
-Parameters:
--
--- *name*
+#### Parameters:
+
+-- (string) `name`
 
 Required. The name of the group to insert to.
 
--- grants
+-- (array) `grants`
 
-The list of user permissions the group have.
+An array of user permissions the group is granted for.
 
-@returns:
--
+#### @returns:
 Returns true on success or an error object.
 
-Usage:
--
+#### Usage:
 ~~~~
 let insert = await insertUserGroup( 'manager', ['editUser', 'deleteUser'] );
 if ( isError(insert) ) {
     // Print error message
     console.log(insert.message);
-} else {
-    console.log('You are awesome!');
 }
 ~~~~
 
-####async: updateUserGroup( string: *name*, array: *grants*, string: oldGroupName)
-
+async: updateUserGroup( string: *name*, array: *grants*, string: oldGroupName)
+-
 Update an existing user group into the database.
 
-Parameters:
--
--- *name*
+#### Parameters:
+-- (string) `name`
 
-The name of the group to update into the database. Note that when changing the group name, the old group name must be set as the third parameter.
+Required. The name of the group to update to. When changing the group's name, the old group name must be set at the third parameter.
 
--- *grants*
+-- (string) `grants`
 
-An array of user permissions to update into the database.
+Required. An array of updated user permissions or the old permissions list.
 
--- *oldGroupName*
+-- (string) `oldGroupName`
 
 Optional. Use only when changing the name of the group.
 
-@returns:
--
+#### @returns:
+
 Returns true on success of an error object.
 
-Usage:
--
+#### Usage:
 ~~~~
 let update = await updateUserGroup( 'helper', [], 'manager' );
 if ( isError(update) ) {
-    // Handle error here....
+    // Print error message
     console.log(update.message);
-} else {
-    console.log('Great, you are now a helper.');
 }
 ~~~~
 
-####async: getUserGroup( string: name )
-
-Retrieve the user group data from the database.
-
-Parameters:
+async: getUserGroup( string: name )
 -
+Retrieve a user group data from the database.
 
--- name
+#### Parameters:
 
-The name of the group to retrieve to.
+-- (string) `name`
 
-@returns:
--
-Returns an object containing the group's data or an error object.
+Required. The name of the group to retrieve the data from.
 
-{name: helper, grants: []}
+#### @returns:
 
-Usage:
--
+Returns the group data object or an error on failure.
 
+#### Usage:
 ~~~~
 let group = await getUserGroup( 'helper' );
 if ( isError(group) ) {
-    // Handle error here
+    // Print error message
     console.log(group.message);
-} else {
-    console.log('Perfect!');
 }
 ~~~~
 
-####async: dropUserGroup( string: name )
-
+async: dropUserGroup( string: name )
+-
 Remove user group from the database.
 
-Parameters:
--
+#### Parameters:
 
--- *name*
+-- (string) `name`
 
 The name of the group to remove to.
 
-@returns:
--
+### @returns:
 Returns true on success or an error object.
 
-Usage:
--
+#### Usage:
 ~~~~
 let deleted = await dropUserGroup( 'helper' );
 if ( isError(deleted) ) {
-    // Handle error here
+    // Print error message
     console.log(deleted.message);
-} else {
-    console.log('Now you are gone.');
 }
 ~~~~
 
-####async: getUserGroups
-*Note: This function has no parameters.*
-
-Returns an array of all user groups inserted into the database.
-
-Usage:
+async: getUserGroups(void)
 -
 
+Returns an array of all user group inserted into the database.
+
+#### Usage:
 ~~~~
 let groups = await getUserGroups();
 
+// Print an array of user group
 if ( groups.length ) {
-    console.log('Hurray, the list of groups is here.');
-} else {
-    console.log('Nothing found...');
+    console.log(groups);
 }
 ~~~~
