@@ -76,8 +76,8 @@ describe('User Queries', () => {
                 required: true,
                 index: true
             },
-            caps: {
-                type: 'object'
+            grants: {
+                type: 'array'
             }
         });
 
@@ -87,21 +87,59 @@ describe('User Queries', () => {
     });
 
     it('Should add user group name = subscriber, author', async function() {
-        let done = await setUserGroup( 'subscriber' );
+        let done = await insertUserGroup( 'subscriber' );
 
         assert.isTrue(done);
 
-        done = await setUserGroup( 'author' );
+        done = await insertUserGroup( 'author' );
 
         assert.isTrue(done);
 
         return done;
     });
 
+    it('Should change user group from subscriber to editor', async function() {
+        let done = await updateUserGroup( 'editor', [], 'subscriber' );
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should get the data of user group = editor', async function() {
+        let group = await getUserGroup('editor');
+
+        assert.equal( group.name, 'editor' );
+
+        return group;
+    });
+
+    it('Should delete user group name editor', async function() {
+        let done = await dropUserGroup('editor');
+
+        assert.isTrue(done);
+
+        // Test
+        let group = await getUserGroup('editor');
+
+        assert.isTrue(isError(group));
+
+        return done;
+    });
+
+    it('Should get an array of user group', async function() {
+        let groups = await getUserGroups();
+
+        assert.isArray(groups);
+        assert.equal( groups.length, 1 );
+
+        return groups;
+    });
+
     let userId, user2, user3;
 
     it('Should add new users', async function() {
-        userId = await setUser({
+        userId = await insertUser({
             display: 'irene',
             email: 'irene@local.dev',
             pass: 'Webdevenquiry@21',
@@ -110,7 +148,7 @@ describe('User Queries', () => {
 
         assert.isNumber(userId);
 
-        user2 = await setUser({
+        user2 = await insertUser({
             display: 'natasha',
             email: 'natasha@local.dev',
             pass: 12346,
@@ -119,7 +157,7 @@ describe('User Queries', () => {
 
         assert.isNumber(user2);
 
-        user3 = await setUser({
+        user3 = await insertUser({
             display: 'ellen',
             email: 'ellen@local.dev',
             pass: 'iamme',
@@ -141,7 +179,7 @@ describe('User Queries', () => {
     });
 
     it('Should update user data', async function() {
-        let done = await setUser({
+        let done = await updateUser({
             ID: userId,
             email: 'irene1@local.dev'
         });

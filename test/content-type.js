@@ -65,6 +65,9 @@ describe('Content type queries', () => {
             },
             fields: {
                 type: 'object'
+            },
+            parents: {
+                type: 'array'
             }
         });
 
