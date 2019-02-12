@@ -1,9 +1,9 @@
-#### async: insertUser( object: *userData* )
+async: insertUser( object: *userData* )
+-
 
 Insert new user into the database.
 
-Parameters: *userData*
--
+#### Parameters: *userData*
 -- (string) *display*
 
 Required. The display name of the user.
