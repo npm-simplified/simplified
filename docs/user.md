@@ -1,6 +1,5 @@
 async: insertUser( object: *userData* )
 -
-
 Insert new user into the database.
 
 #### Parameters: *userData*
@@ -20,12 +19,20 @@ Require. The human readable password of the user. Primarily use in login authent
 
 Required. The name of the group assign to the user. Note that the assign group name must exist from the database. Otherwise will return an error.
 
-#### @returns:
+#### @hooks
+-- (event) `insertedUser`( int: *ID* )
 
-Returns new user id on success or an error object on failure.
+Called whenever a new user is inserted into the database.
+
+#### Parameter:
+-- (string) `ID`
+
+The new user id.
+
+#### @returns:
+Returns new user id on success or an error on failure.
 
 #### Usage:
-
 ~~~~
 let userId = await insertUser({
     display: 'natasha',
@@ -37,7 +44,6 @@ let userId = await insertUser({
 if ( isError(userId) ) {
     // Print error message
     console.log(userId.message);
-    return;
 }
 ~~~~
 
@@ -66,6 +72,20 @@ Optional. Use only when updating the user's password.
 -- (string) `group`
 
 Optional. Use only when updating the user's group.
+
+#### @hooks
+-- (event) `updatedUser`( int: ID, object: user)
+
+Triggered whenever user's data is updated in the database.
+
+#### Parameters:
+-- (int) `ID`
+
+The id of the updated user.
+
+-- (object) `user`
+
+The old user object data prior to update.
 
 #### @returns:
 
