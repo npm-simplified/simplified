@@ -5,29 +5,43 @@ Insert new user into the database.
 #### Parameters: *userData*
 -- (string) `display`
 
-Required. The display name of the user.
+Required. The user's display name.
 
 -- (string) `email`
 
-Required. The email address of the user.
+Required. The user's email address.
 
 -- (string) `pass`
 
-Require. The human readable password of the user. Primarily use in login authentication.
+Required. The user's human readable password. Primarily use during authentication. 
 
 -- (string) `group`
 
-Required. The name of the group assign to the user. Note that the assign group name must exist from the database. Otherwise will return an error.
+Required. The name of the group assign to the user.
 
-#### @hooks
+The assigned group name must already exist from the database. Assigning an unknown group name will return an error.
+
+##### @hooks
 -- (event) `insertedUser`( int: *ID* )
 
-Called whenever a new user is inserted into the database.
+Triggered whenever a new user is inserted into the database.
 
-#### Parameter:
+###### Parameter:
 -- (string) `ID`
 
 The new user id.
+
+###### Usage:
+~~~~
+// Assuming you want to save the new user's id elsewhere
+// Add a callable function to do your stuff that will be called
+// whenever a new user is inserted into the database.
+const myCustomFunc = function(id) {
+    // Do your stuff here
+    ....
+}
+appEvent('insertedUser').set(myCustomFunc);
+~~~~
 
 #### @returns:
 Returns new user id on success or an error on failure.

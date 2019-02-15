@@ -6,6 +6,11 @@
   "scripts": {
     "test": "mocha"
   },
+  "bin": {
+    "smjs": "./bin/database",
+    "smjs install": "./bin/install",
+    "smjs add-user": "./bin/add-user"
+  },
   "keywords": [],
   "author": "nazzy",
   "license": "MIT",
