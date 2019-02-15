@@ -108,7 +108,7 @@ if ( isError(userId) ) {
 ~~~~
 
 #### @hooks
--- (event) `updatedUser`( int: ID, object: user)
+-- (event) `updatedUser`( int: *ID*, object: *user*)
 
 Triggered whenever user's data is updated in the database.
 
@@ -132,7 +132,7 @@ const userUpdate = function(id, user) {
 appEvent('updatedUser').set(userUpdate);
 ~~~~
 
-async: getUserBy( string: column, string|int: value )
+async: getUserBy( string: *column*, string|int: *value* )
 -
 Get user's data from the database base on the given column name and value.
 
@@ -184,7 +184,7 @@ const setUserRating = function(user) {
 appFilter('getUser').set(setUserRating);
 ~~~~
 
-async: getUser( int: ID )
+async: getUser( int: *ID* )
 -
 A convenient way to get user's data from the database base on user id.
 
@@ -209,7 +209,7 @@ if ( isError(user) ) {
 }
 ~~~~
 
-async: dropUser(ID)
+async: dropUser(int: *ID*)
 -
 Remove user from the database.
 
@@ -231,7 +231,7 @@ if ( isError(deleted) ) {
 ~~~~
 
 #### @hooks
--- (event) `deletedUser`(object: userData)
+-- (event) `deletedUser`(object: *userData*)
 
 Triggered whenever user is deleted from the database.
 
@@ -250,7 +250,7 @@ const deletedUser = function(user) {
 appEvent('deletedUser').set(deletedUser);
 ~~~~
 
-async: usersQuery( object: queryFilters )
+async: usersQuery( object: *queryFilters* )
 -
 
 Get users from the database filtered by the given query filters.
@@ -302,7 +302,7 @@ Applied to every return users found in the query.
 ##### Parameter:
 -- (object) `userData`
 
-async: getUsers( object: queryFilter )
+async: getUsers( object: *queryFilter* )
 -
 A convenient way to get the list of users from the database. *queryFilters* parameter have
 the same definition to `usersQuery`.
@@ -318,7 +318,7 @@ let users = await getUsers();
 console.log(users.length);
 ~~~~
 
-async: validateUser( string: email, string: pass )
+async: validateUser( string: *email*, string: *pass* )
 -
 Validate user prior to login.
 
@@ -347,7 +347,7 @@ if ( isError(user) ) {
 }
 ~~~~
 
-async: loginUser( string: email, string: pass )
+async: loginUser( string: *email*, string: *pass* )
 -
 Validate and login user.
 
@@ -448,7 +448,7 @@ if ( isUserLoggedIn() ) {
 }
 ~~~~
 
-async: isUserGranted( int: ID, (string|array) perms, any: grantFor ) 
+async: isUserGranted( int: *ID*, string: *perms*, any: *grantFor* ) 
 -
 Check if a user have granted permission(s).
 
@@ -511,7 +511,7 @@ if ( ! isUserGranted( 1, 'edit-user', 3 ) ) {
 }
 ~~~~
 
-async: currentUserCan( string|array: perm, any: grantFor )
+async: currentUserCan( string: *perm*, any: *grantFor* )
 -
 Check if current logged in user have granted permission(s).
 
