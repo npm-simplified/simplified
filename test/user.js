@@ -171,14 +171,35 @@ describe('User Queries', () => {
         return user;
     });
 
-    it('Should get users where user group = subscriber', async function() {
-        let subscribers = await usersQuery({group: 'subscriber'});
+    it('Should set user metadata', async function() {
+        // Add
+        let done = await setUserMeta( userId, 'cup', 'big' );
 
-        assert.equal( subscribers.users.length, 1 );
+        assert.isTrue(done);
+
+        done = await setUserMeta( user2, 'cup', 'big' );
+
+        assert.isTrue(done);
+
+        done = await setUserMeta( user3, 'cup', 'small' );
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should get users thru usersQuery', async function() {
+        let users = await usersQuery({group: 'subscriber'});
+
+        assert.equal( users.users.length, 1 );
 
         // @todo: Get users with metadata
 
-        return subscribers;
+        users = await usersQuery({meta: {name: 'cup', value: 'big'}});
+
+        assert.equal( users.users.length, 2 );
+
+        return users;
     });
 
     it('Should validate user', async function() {
@@ -208,7 +229,7 @@ describe('User Queries', () => {
     it('Should get the list of users without filters', async function() {
         let users = await getUsers();
 
-        assert.equal( users.length, 3 );
+        assert.equal( users.length, 2 );
 
         return users;
     });
@@ -227,26 +248,24 @@ describe('User Queries', () => {
         return done;
     });
 
-    it('Should get the single value of user meta', async function() {
+    it('Should get user meta in different parameters', async function() {
         let meta = await getUserMeta( userId, 'role', true );
 
         assert.equal( meta, 'subscriber' );
 
-        meta = await getUserMeta(userId);
+        meta = await getUserMeta( userId, 'role' );
+
+        assert.equal( meta.length, 1 );
 
         return meta;
     });
 
     it('Should delete user meta', async function() {
-        return true;
-
-        /**
         let done = await dropUserMeta( userId, 'role' );
 
         assert.isTrue(done);
 
         return done;
-         **/
     });
 
     it('Should get all user meta', async function() {
@@ -260,7 +279,7 @@ describe('User Queries', () => {
     it('Should get users where group = subscriber', async function() {
         let users = await usersQuery({group: 'subscriber'});
 
-        assert.equal( users.users.length, 2 );
+        assert.equal( users.users.length, 1 );
 
         return users;
     });
@@ -268,30 +287,9 @@ describe('User Queries', () => {
     it('Should get users that are a member of group = subscriber, author', async function() {
         let users = await usersQuery({group__in: ['subscriber', 'author']});
 
-        assert.equal( users.users.length, 3 );
+        assert.equal( users.users.length, 1 );
 
         return users;
-    });
-
-    it('Should get users with filters', async function() {
-        let users = await usersQuery({
-            meta: {
-                name: 'role',
-                value: 'subscriber'
-            }
-        });
-
-        assert.equal( users.users.length, 2 );
-
-        return users;
-    });
-
-    it('Should delete user', async function() {
-        let done = await dropUser(userId);
-
-        assert.isTrue(done);
-
-        return done;
     });
 
     it('Should drop user meta table', async function() {
