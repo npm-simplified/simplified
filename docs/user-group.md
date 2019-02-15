@@ -6,14 +6,14 @@ Insert new user group into the database.
 
 -- (string) `name`
 
-Required. The name of the group to insert to.
+Required. The user group's name.
 
 -- (array) `grants`
 
-An array of user permissions the group is granted for.
+An array of permissions granted to the group.
 
 #### @returns:
-Returns true on success or an error object.
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -24,18 +24,29 @@ if ( isError(insert) ) {
 }
 ~~~~
 
-async: updateUserGroup( string: *name*, array: *grants*, string: oldGroupName)
+#### @hooks:
+-- (event) `insertedUserGroup`(object: *group*)
+
+Triggered whenever a new user group is inserted into the database.
+
+###### Parameter:
+-- (object) `group`
+
+An object containing the new user group's data.
+
+async: updateUserGroup( string: *name*, array: *grants*, string: *oldGroupName*)
 -
-Update an existing user group into the database.
+Update user group in the database.
 
 #### Parameters:
 -- (string) `name`
 
-Required. The name of the group to update to. When changing the group's name, the old group name must be set at the third parameter.
+Required. The name of the group to update to. If the name of the group is different from what was
+previously set, the old group's name must be set as the third parameter of the function.
 
--- (string) `grants`
+-- (array) `grants`
 
-Required. An array of updated user permissions or the old permissions list.
+Required. An array of permissions granted to the group.
 
 -- (string) `oldGroupName`
 
@@ -43,7 +54,7 @@ Optional. Use only when changing the name of the group.
 
 #### @returns:
 
-Returns true on success of an error object.
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -54,19 +65,33 @@ if ( isError(update) ) {
 }
 ~~~~
 
-async: getUserGroup( string: name )
+#### @hooks:
+-- (event) `updatedUserGroup`( object: *group*, object: *oldGroup* )
+
+Triggered whenever a user group data is updated in the database.
+
+###### Parameters:
+-- (object) `group`
+
+The updated group object.
+
+-- (object) `oldGroup`
+
+An object containing the group's old data, prior to update.
+
+async: getUserGroup( string: *name* )
 -
-Retrieve a user group data from the database.
+
+Get the user group's data from the database.
 
 #### Parameters:
 
 -- (string) `name`
 
-Required. The name of the group to retrieve the data from.
+Required. The name of the group to get the data at.
 
 #### @returns:
-
-Returns the group data object or an error on failure.
+Returns an object containing the user group's data or error on failure.
 
 #### Usage:
 ~~~~
@@ -75,9 +100,17 @@ if ( isError(group) ) {
     // Print error message
     console.log(group.message);
 }
+// Sample result
+{name: 'helper', grants: [....]}
 ~~~~
 
-async: dropUserGroup( string: name )
+#### @hooks:
+-- (filter) `userUserGroup`( object: *group* )
+
+Called before returning the user's group data. This filter is fired to allow filtering
+of the user's group data object.
+
+async: dropUserGroup( string: *name* )
 -
 Remove user group from the database.
 
@@ -85,10 +118,10 @@ Remove user group from the database.
 
 -- (string) `name`
 
-The name of the group to remove to.
+The name of the group to remove at.
 
 ### @returns:
-Returns true on success or an error object.
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -99,10 +132,20 @@ if ( isError(deleted) ) {
 }
 ~~~~
 
+#### @hooks:
+-- (event) `deletedUserGroup`( object: *group*)
+
+Triggered every time a user group is deleted from the database.
+
+###### Parameter:
+-- (object) `group`
+
+An object containing the user's group data before deletion.
+
 async: getUserGroups(void)
 -
 
-Returns an array of all user group inserted into the database.
+Get the list of users group from the database.
 
 #### Usage:
 ~~~~
@@ -113,3 +156,8 @@ if ( groups.length ) {
     console.log(groups);
 }
 ~~~~
+
+#### @hooks:
+-- (filter) `getUserGroup`( object: *group*)
+
+Called to each user group in the return list.

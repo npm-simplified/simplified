@@ -1,4 +1,4 @@
-async: insertContent( object: contentData )
+async: insertContent( object: *contentData* )
 -
 Insert new content into the database.
 
