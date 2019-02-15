@@ -165,7 +165,7 @@ if ( isError(user) ) {
 #### @hooks
 -- (filter) async: `getUser`(object: *userData*)
 
-Fired whenever user is retrieve from the database.
+Called whenever user is retrieve from the database.
 
 ###### Parameter:
 -- (object) `userData`
@@ -186,7 +186,7 @@ appFilter('getUser').set(setUserRating);
 
 async: getUser( int: ID )
 -
-A convenient way to get the user's data from the database using the user's id.
+A convenient way to get user's data from the database base on user id.
 
 #### Parameters:
 
@@ -196,7 +196,7 @@ The id of the user to get the data to.
 
 #### @returns:
 
-Returns user's data object on success or an error object.
+Returns an object containing user's data on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -219,8 +219,6 @@ Remove user from the database.
 
 The id of the user to remove to.
 
-*Note: Other user's data, such as metadata are also removed from the database.*
-
 #### Usage:
 ~~~~
 let deleted = await dropUser(1);
@@ -232,31 +230,51 @@ if ( isError(deleted) ) {
 }
 ~~~~
 
+#### @hooks
+-- (event) `deletedUser`(object: userData)
+
+Triggered whenever user is deleted from the database.
+
+###### Parameter:
+-- (object) `userData`
+
+The deleted user's data.
+
+###### Sample Usage:
+~~~~
+// Remove your custom data from somewhere
+const deletedUser = function(user) {
+    // Do your stuff here...
+    ......
+};
+appEvent('deletedUser').set(deletedUser);
+~~~~
+
 async: usersQuery( object: queryFilters )
 -
 
-Retrieve users from the database on the given query filters.
+Get users from the database filtered by the given query filters.
 
 #### Parameters: *queryFilters*
 
 -- (string) `group`
 
-Optional. The name of the group a user is a member of.
+Optional. The name of the group assign to user.
 
 -- (array) `group__in`
 
-Optional. An array of user group name where the return users must be a member of.
+Optional. An array of user group name assigned to users.
 
 -- (array) `group__not_in`
 
-Optional. An array of user group name where the return users must not be a member of.
+Optional. An array of user group name where users is not a member of.
 
 -- (array) `within`
-Optional. An array of user IDs that the return results are base at.
+Optional. An array of users ID where the return results are base at.
 
 -- (array) `not__within`
 
-Optional. An array of user IDs where the return users id must not be among the list.
+Optional. An array of users ID that will be excluded in the query.
 
 -- (int) `page`
 
@@ -264,57 +282,33 @@ Optional. The page number to base the return results at.
 
 -- (int) `perPage`
 
-Optional. The number of users to return in the query.
+Optional. Specify the number of users to return.
 
 #### @returns:
-Returns an object containing the total number of users found in the query and an array of user object.
+Returns an object containing the total number match found and an array of user object.
 
 #### Usage:
 ~~~~
 let query = await usersQuery({ group: 'helper' });
-
-if ( query.foundItems > 0 ) {
-    let users = query.users;
-    
-    // Do your thing here
-    ....
-}
+// Return object
+{foundItems: 20, users: [...]}
 ~~~~
+
+#### @hooks:
+-- (filter) `getUser`(object: *userData*)
+
+Applied to every return users found in the query.
+
+##### Parameter:
+-- (object) `userData`
 
 async: getUsers( object: queryFilter )
 -
-A convenient way to get the list of users from the database.
-
-#### Parameters: *queryFilter*
--- (string) `group`
-
-Optional. The name of the group a user is a member of.
-
--- (array) `group__in`
-
-Optional. An array of user group name where the return users must be a member of.
-
--- (array) `group__not_in`
-
-Optional. An array of user group name where the return users must not be a member of.
-
--- (array) `within`
-Optional. An array of user IDs that the return results are base at.
-
--- (array) `not__within`
-
-Optional. An array of user IDs where the return users id must not be among the list.
-
--- (int) `page`
-
-Optional. The page number to base the return results at.
-
--- (int) `perPage`
-
-Optional. The number of users to return in the query.
+A convenient way to get the list of users from the database. *queryFilters* parameter have
+the same definition to `usersQuery`.
 
 #### @returns:
-Returns an array containing user object.
+Returns an array users on success or empty array on failure.
 
 #### Usage:
 ~~~~
@@ -326,21 +320,21 @@ console.log(users.length);
 
 async: validateUser( string: email, string: pass )
 -
-Helper function use to validate a user prior to login.
+Validate user prior to login.
 
 #### Parameters:
 
 -- (string) `email`
 
-Required. The email address use during user insertion.
+Required. The user's email address.
 
 -- (string) `pass`
 
-Required. The human readable password of the user to validate to.
+Required. The user's human readable password.
 
 #### @returns:
 
-Returns an object container the user's data on success or an error object.
+Returns user object on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -355,20 +349,20 @@ if ( isError(user) ) {
 
 async: loginUser( string: email, string: pass )
 -
-Validate and login a user into the system.
+Validate and login user.
 
 #### Parameters:
 -- (string) `email`
 
-Required. The email address use during user insertion.
+Required. The user's email address.
 
 -- (string) `pass`
 
-Required. The human readable password of the user to validate to.
+Required. The user's human readable password.
 
 #### @returns:
 
-Returns an object containing the user's data on success or an error object.
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -377,19 +371,75 @@ let login = await loginUser( 'natasha@awesomemail.com', '123456' );
 if ( isError(login) ) {
     // Print error message
     console.log(login.message);
-    
-    return;
 }
+
+// Print current user
+console.log(currentUser);
+~~~~
+
+#### @hooks:
+-- (filter) `loginDuration`(int: expires)
+
+Called before setting the number of microseconds a user must stay login.
+
+###### Parameter:
+-- (int) `expires`
+
+The duration to which the user must stay login. Default is 30 days.
+
+-- (event) `login`(object: *userData*)
+
+Triggered whenever a user successfully login.
+
+###### Parameter:
+-- (object) `userData`
+
+The current login user's data.
+
+###### Sample Usage:
+~~~~
+// Change login duration to 7 days
+const changeToSeven = expires => {
+    expires = Date.now() + (38400 * 7 * 6000);
+    
+    return expires;
+};
+appFilter('loginDuration').set(changeToSeven);
+
+// Do some recording to login user
+const doSomething = userData => {
+    // Do something to the login user here
+    .....
+};
+appEvent('login').set(doSomething);
 ~~~~
 
 async: logoutUser(void)
 -
-Helper function use for logging out a user from the system.
+Log user out from the system.
+
+#### @hooks:
+-- (event) `logout`(object: *userData*)
+
+Triggered when user logout from the system.
+
+###### Parameter:
+-- (object) `userData`
+
+The current user's object bound to logout.
+
+###### Sample Usage:
+~~~~
+const logMeOut = userData => {
+    // Do your stuff here...
+    ......
+};
+appEvent('logout').set(logMeOut);
+~~~~
 
 isUserLoggedIn(void)
 -
-
-Check if a user is currently logged in into the system.
+Check if the current user is logged in.
 
 #### Usage:
 ~~~~
@@ -400,21 +450,21 @@ if ( isUserLoggedIn() ) {
 
 async: isUserGranted( int: ID, (string|array) perms, any: grantFor ) 
 -
-Verify if a user have granted the given permission or any of the given list of permissions.
+Check if a user have granted permission(s).
 
 #### Parameters:
 
 -- (int) `ID`
 
-The id of the user to check the existence of the permission at.
+The id of the user to check.
 
 -- (string|array) `perm`
 
-The type of permission to check if the user have granted at.
+The type of permission or permissions to check at.
 
 -- (any) `grantFor`
 
-An optional parameter use to further validation the user's permission at.
+An optional parameter use to further validate the user's permission.
 
 #### @returns:
 Returns true on success or false on failure.
@@ -424,24 +474,56 @@ Returns true on success or false on failure.
 if ( ! isUserGranted( 1, 'editUser', 5 ) ) {
     // Print warning here
     console.log('You are not allowed to edit this user.');
-    
-    return;
+}
+~~~~
+
+#### @hooks:
+-- (filter) `userPermissions`(object: *grants*, object: *user*, string: *perm*, any: *grantFor*)
+
+Called before validating user's granted permissions.
+
+###### Parameters:
+-- (object) `grants`
+
+An object containing the current user's granted permission.
+
+-- (object) `user`
+
+An object of the user being check at.
+
+-- (string|array) `perm`
+
+The type or types of permission to validate against.
+
+-- (any) `grantFor`
+
+An optional parameter use to further validate the user's permission.
+
+###### @returns:
+Returns an object containing the user's granted permissions.
+
+###### Sample Usage:
+~~~~
+// Check if user is allowed to edit other user's profile
+if ( ! isUserGranted( 1, 'edit-user', 3 ) ) {
+    // Print error restriction
+    console.log('You are not allowed to edit this user.');
 }
 ~~~~
 
 async: currentUserCan( string|array: perm, any: grantFor )
 -
-A convenient way to check the current logged in user's granted permissions.
+Check if current logged in user have granted permission(s).
 
 #### Parameters:
 
 -- (string|array) `perm`
 
-The type of permission/s to check against the current user to.
+The type or types of permission to check against.
 
 -- (any) `grantFor`
 
-Optional. An additional data use for further validation of the current user's granted permission/s.
+An optional parameter use to further validate the user's permission.
 
 #### Usage:
 ~~~~
