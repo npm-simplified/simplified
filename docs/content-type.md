@@ -1,8 +1,8 @@
-async: insertContentType( object: args )
+async: insertContentType( object: *contentTypeData* )
 -
-Adds a new content type into the database.
+Insert new content type into the database.
 
-#### Parameters:
+#### Parameters: *contentTypeData*
 -- (string) `name`
 
 The content type name.
@@ -13,27 +13,27 @@ A unique slug use as the content type's identifier.
 
 -- (string) `status`
 
-The status of the content type. Options are **active**|**inactive**. Default is *active*.
+The content type status. Statuses are *active* | *inactive*.
 
 -- (boolean) `hierarchical`
 
-Whether a content of the content type can have children.
+Set to true to allow hierarchy to the contents of the content type.
 
 -- (boolean) `archive`
 
-Whether contents of the content type are archive for public users.
+Set to true to enable public archive page, listing the contents of the content type.
 
 -- (boolean) `page`
 
-Whether an individual content of the content type is publicly viewable.
+Set to true to have content of the content type have individual pages.
 
 -- (boolean) `comments`
 
-Whether users may leave comments to the content of the content type.
+Set to true to allow comments posted to the content of the content type. Comments can also be disabled per content.
 
 -- (boolean) `rest`
 
-Whether contents of the content type are accessible via REST API.
+Set to true to let contents of the content type queryable via REST API.
 
 -- (string) `archiveTitle`
 
@@ -41,26 +41,26 @@ The content type archive title.
 
 -- (string) `archiveDescription`
 
-Optional. The content type's archive description.
+Optional. The content type's custom archive description.
 
 -- (string) `archiveSlug`
 
-Required. Use to construct the readable link which points to the content type's archive page.
+Required. Use to construct the public archive route which handles the display of content listing.
 
 -- (int) `itemsPerPage`
 
-Required. The number of contents to display per page.
+Required. The number of contents to display per page on public archive page.
 
 -- (array) `parents`
 
-An array of other content type slug where the content type is a descendant of.
+An array of other content type slug where the content type is a descendant of. Usually use in content type of type group.
 
 -- (object) `fields`
 
-Optional. An object that defines the content type's content table structure. 
+Optional. An object that defines the table structure of the contents of the content type.
 
 #### @returns:
-Returns true on success or error object on failure.
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -107,17 +107,21 @@ if ( isError(category) ) {
 }
 ~~~~
 
-async: updateContentType( object: contentType, string: oldSlug )
+#### @hooks:
+-- (event) `insertedContentType`(object: *contentTypeData*)
+
+Triggered whenever a new content type is inserted into the database.
+
+async: updateContentType( object: *contentType*, string: *oldSlug* )
 -
-Updates an existing content type in the database.
+Updates content type in the database.
 
 #### Parameters:
 **object:** ***contentType***
 
 -- (string) `slug`
 
-Required. The content type slug identifier to update to.
-*Note: When changing the content type slug, set the old content type slug as the second parameter.
+Required. The content type's unique slug.
 
 -- (string) `name`
 
@@ -153,16 +157,16 @@ Optional. Use only when updating the list of parents or remove parents of the co
 
 -- (object) `fields`
 
-Optional. Use only when resetting the content type's content table structure.
+Optional. Use only when resetting the content type's contents table structure.
 
 **oldSlug**
 
 -- (string) `oldSlug`
 
-The content type's old unique slug identifier prior to updating.
+Optional. Use only when changing the content type's unique slug identifier.
 
 #### @returns
-Returns true on success or error object on failure.
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -177,19 +181,22 @@ if ( isError(blog) ) {
 }
 ~~~~
 
-async: dropContentType( string: slug )
+#### @hooks:
+-- (event) `updatedContentType`(object: *contentTypeData*, object: *oldContentTypeData*)
+
+Triggered whenever a content type is updated in the database.
+
+async: dropContentType( string: *slug* )
 -
 Remove content type from the database.
-
-*Note: All contents, including the content's metadata, comments, and other relevance data associated to the content type will also gets deleted.*
 
 #### Parameter:
 -- (string) `slug`
 
-Required. The unique slug content type identifier.
+Required. The content type's unique slug.
 
 #### @returns:
-Returns true on success or error object on failure.
+Returns true on success or error on failure.
 
 #### Usage
 ~~~~
@@ -201,16 +208,29 @@ if ( isError(drop) ) {
 }
 ~~~~
 
-async: getContentType( string: slug )
+#### @hooks:
+-- (event) `deletedContentType`(object: *contentTypeData*)
+
+Triggered whenever a content type is deleted from the database.
+
+###### Parameter:
+-- (object) `contentTypeData`
+
+An object containing the content type data before deletion.
+
+
+async: getContentType( string: *slug* )
 -
 
-Get the content type object from the database base on the given content type slug.
+Get content type from the database.
 
 #### Parameter:
 -- (string) `slug`
 
+Required. The content type's unique slug.
+
 #### @returns:
-Returns content type object on success or error on failure.
+Returns an object containing the content type's data or error on failure.
 
 #### Usage:
 ~~~~
@@ -222,11 +242,17 @@ if ( isError(contentType) ) {
 }
 ~~~~
 
-async: getContentTypes( object: queryFilter ) 
--
-Retrieve content types from the database.
+#### @hooks:
+-- (filter) `getContentType`(object: *ContentTypeData*)
 
-#### Parameters:
+Called whenever a content type is retrieve from the database.
+This filter is fired to filter the content type object prior to returning.
+
+async: getContentTypes( object: *queryFilter* ) 
+-
+Get content types from the database.
+
+#### Parameter: *queryFilter*
 -- (string) `status`
 
 Optional. The content type status.
