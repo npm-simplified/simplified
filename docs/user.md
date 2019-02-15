@@ -530,7 +530,5 @@ An optional parameter use to further validate the user's permission.
 if ( ! currentUserCan( 'edit-user', 5 ) ) {
     // Print warning here
     console.log('You are not allowed to edit this user.');
-    
-    return;
 }
 ~~~~
