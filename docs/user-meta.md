@@ -5,7 +5,7 @@ Insert or update user's metadata into the database.
 #### Parameters:
 -- (int) `ID`
 
-Required. The id of the user to insert or update the metadata into.
+Required. The id of the user whom to insert or update the metadata.
 
 -- (string) `name`
 
@@ -17,7 +17,7 @@ Required. The corresponding value of the metadata.
 
 -- (boolean) `single`
 
-Optional. Use to specify that the metadata should only have on value.
+Optional. Use to specify that the metadata should only have one value.
 
 #### returns:
 Returns true on success or error on failure.
@@ -42,14 +42,14 @@ The id of the user to get the metadata from.
 
 -- (string) `name`
 
-Optional. The name of the metadata to get to. If omitted, will return an object containing all of user's metadata.
+Optional. The name of the metadata to get the value at. If omitted, will return an object containing all of user's metadata.
 
 -- (boolean) `single`
 
-Optional. If true, will return the corresponding value of the metadata. Otherwise will return an array of values.
-
+Optional. Set this to true to return the single metadata value. False will return an array of values.
+ 
 #### @returns:
-The return result varies depending on the parameters set and the type of corresponding metadata value. Returns an error object on failure.
+The return result varies depending on the parameters set and the type of corresponding metadata value. Otherwise, will return an error on failure.
 
 #### Usage:
 ~~~~
@@ -83,16 +83,15 @@ Remove user's metadata from the database.
 #### Parameters:
 -- (int) `ID`
 
-Required. The id of the user to remove the metadata from.
+Required. The id of the user whom to remove the metadata from.
 
 -- (string) `name`
 
-Optional. If set, will remove user's metadata of the given name. Otherwise will remove all of user's metadata.
+Optional. The name of the metadata to remove at. If omitted, will remove all of the user's metadata.
 
 -- (any) `value`
 
-Optional. If set, will remove only user's metadata with a match value. Omitting this parameter will remove user's metadata of the given name.
-
+Optional. The value of the metadata to remove at. If set, will only remove metadata with a match value. Omitting this parameter will remove all metadata matching the given metadata name.
 #### @returns:
 Returns true on success or error on failure.
 

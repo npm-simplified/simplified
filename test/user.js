@@ -87,7 +87,7 @@ describe('User Queries', () => {
     });
 
     it('Should add user group name = subscriber, author', async function() {
-        let done = await insertUserGroup( 'subscriber' );
+        let done = await insertUserGroup( 'subscriber', ['read', 'edit-user'] );
 
         assert.isTrue(done);
 
@@ -95,45 +95,11 @@ describe('User Queries', () => {
 
         assert.isTrue(done);
 
-        return done;
-    });
-
-    it('Should change user group from subscriber to editor', async function() {
-        let done = await updateUserGroup( 'editor', [], 'subscriber' );
+        done = await insertUserGroup( 'editor' );
 
         assert.isTrue(done);
 
         return done;
-    });
-
-    it('Should get the data of user group = editor', async function() {
-        let group = await getUserGroup('editor');
-
-        assert.equal( group.name, 'editor' );
-
-        return group;
-    });
-
-    it('Should delete user group name editor', async function() {
-        let done = await dropUserGroup('editor');
-
-        assert.isTrue(done);
-
-        // Test
-        let group = await getUserGroup('editor');
-
-        assert.isTrue(isError(group));
-
-        return done;
-    });
-
-    it('Should get an array of user group', async function() {
-        let groups = await getUserGroups();
-
-        assert.isArray(groups);
-        assert.equal( groups.length, 1 );
-
-        return groups;
     });
 
     let userId, user2, user3;
@@ -161,7 +127,7 @@ describe('User Queries', () => {
             display: 'ellen',
             email: 'ellen@local.dev',
             pass: 'iamme',
-            group: 'subscriber'
+            group: 'editor'
         });
 
         assert.isNumber(user3);
@@ -189,6 +155,52 @@ describe('User Queries', () => {
         done = await getUser(userId);
 
         assert.equal(done.email, 'irene1@local.dev');
+
+        return done;
+    });
+
+    it('Should get user', async function() {
+        let user = await getUserBy( 'email', 'irene1@local.dev' );
+
+        assert.equal( user.ID, userId );
+
+        user = await getUser(user2);
+
+        assert.equal(user.ID, user2);
+
+        return user;
+    });
+
+    it('Should get users where user group = subscriber', async function() {
+        let subscribers = await usersQuery({group: 'subscriber'});
+
+        assert.equal( subscribers.users.length, 1 );
+
+        // @todo: Get users with metadata
+
+        return subscribers;
+    });
+
+    it('Should validate user', async function() {
+        let done = await validateUser( 'irene1@local.dev', 'Webdevenquiry@21' );
+
+        assert.equal( done.ID, userId );
+
+        return done;
+    });
+
+    it('Should check if user have granted read permission', async function() {
+        let done = await isUserGranted( userId, 'read' );
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should remove user from the database', async function() {
+        let done = await dropUser(userId);
+
+        assert.isTrue(done);
 
         return done;
     });

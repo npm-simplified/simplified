@@ -1,3 +1,24 @@
+async: emailExist( string: *email* )
+-
+Check if an email is already in use.
+
+#### Parameter:
+-- (string) `email`
+
+The user's email address to check into.
+
+#### @returns:
+Returns an object containing an existing user's data on success or error on failure.
+
+#### Usage:
+~~~~
+let otherUser = await emailExist('natasha@awesomemail.com');
+if ( ! isError(otherUser) && otherUser.ID ) {
+    // Email is already in use
+    console.log('Email already exist.');
+}
+~~~~
+
 async: insertUser( object: *userData* )
 -
 Insert new user into the database.
@@ -170,7 +191,7 @@ Called whenever user is retrieve from the database.
 ###### Parameter:
 -- (object) `userData`
 
-An object containing user's information.
+An object containing user's data.
 
 ###### Sample Usage:
 ~~~~
@@ -184,13 +205,13 @@ const setUserRating = function(user) {
 appFilter('getUser').set(setUserRating);
 ~~~~
 
-async: getUser( int: *ID* )
+async: getUser( int: *useId* )
 -
 A convenient way to get user's data from the database base on user id.
 
 #### Parameters:
 
--- (int) `ID`
+-- (int) `useId`
 
 The id of the user to get the data to.
 
@@ -215,9 +236,12 @@ Remove user from the database.
 
 #### Parameters:
 
--- (int) `ID`
+-- (int) `userId`
 
 The id of the user to remove to.
+
+#### @returns:
+Returns true on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -259,30 +283,34 @@ Get users from the database filtered by the given query filters.
 
 -- (string) `group`
 
-Optional. The name of the group assign to user.
+Optional. The name of the group assigned to user.
 
 -- (array) `group__in`
 
-Optional. An array of user group name assigned to users.
+Optional. An array of user group names assigned to users.
 
 -- (array) `group__not_in`
 
-Optional. An array of user group name where users is not a member of.
+Optional. An array of user group names where users is not a member of.
 
 -- (array) `within`
-Optional. An array of users ID where the return results are base at.
+Optional. An array of users ID where the return results must be within the list.
 
 -- (array) `not__within`
 
-Optional. An array of users ID that will be excluded in the query.
+Optional. An array or users ID where the return results must exclude the given list.
 
 -- (int) `page`
 
-Optional. The page number to base the return results at.
+Optional. The page number use to start the query at.
 
 -- (int) `perPage`
 
-Optional. Specify the number of users to return.
+Optional. Specifies the number of users to return in the query.
+
+-- (object) `meta`
+
+Optional. An object consist of user's metadata filters to match against the users.
 
 #### @returns:
 Returns an object containing the total number match found and an array of user object.
@@ -295,17 +323,19 @@ let query = await usersQuery({ group: 'helper' });
 ~~~~
 
 #### @hooks:
+-- (filter) `preGetUsers`(object: *queryFilters*)
+
+Fired to allow alteration on the query filters before execution.
+
 -- (filter) `getUser`(object: *userData*)
 
 Applied to every return users found in the query.
 
-##### Parameter:
--- (object) `userData`
-
 async: getUsers( object: *queryFilter* )
 -
-A convenient way to get the list of users from the database. *queryFilters* parameter have
-the same definition to `usersQuery`.
+A convenient way to get the list of users from the database.
+
+*Refer to `usersQuery` for parameters definition.*
 
 #### @returns:
 Returns an array users on success or empty array on failure.
@@ -380,12 +410,12 @@ console.log(currentUser);
 #### @hooks:
 -- (filter) `loginDuration`(int: expires)
 
-Called before setting the number of microseconds a user must stay login.
+Fired to allow alteration to the number of microseconds a user must stay login.
 
 ###### Parameter:
 -- (int) `expires`
 
-The duration to which the user must stay login. Default is 30 days.
+The duration to which the user must stay login. Default is 30 days in microseconds.
 
 -- (event) `login`(object: *userData*)
 
@@ -394,7 +424,7 @@ Triggered whenever a user successfully login.
 ###### Parameter:
 -- (object) `userData`
 
-The current login user's data.
+The current login user's object data.
 
 ###### Sample Usage:
 ~~~~
@@ -456,11 +486,11 @@ Check if a user have granted permission(s).
 
 -- (int) `ID`
 
-The id of the user to check.
+Required. The id of the user to check.
 
 -- (string|array) `perm`
 
-The type of permission or permissions to check at.
+Required. The type or types of permission to check at.
 
 -- (any) `grantFor`
 
@@ -480,16 +510,16 @@ if ( ! isUserGranted( 1, 'editUser', 5 ) ) {
 #### @hooks:
 -- (filter) `userPermissions`(object: *grants*, object: *user*, string: *perm*, any: *grantFor*)
 
-Called before validating user's granted permissions.
+Filter the current user's granted permissions to allow alteration or changes before validation.
 
 ###### Parameters:
--- (object) `grants`
+-- (array) `grants`
 
-An object containing the current user's granted permission.
+An array of user's granted permissions.
 
 -- (object) `user`
 
-An object of the user being check at.
+The user's object data currently validated.
 
 -- (string|array) `perm`
 
@@ -500,7 +530,7 @@ The type or types of permission to validate against.
 An optional parameter use to further validate the user's permission.
 
 ###### @returns:
-Returns an object containing the user's granted permissions.
+Returns an array containing the user's granted permissions.
 
 ###### Sample Usage:
 ~~~~
