@@ -22,7 +22,7 @@ Required. The name of the group assign to the user.
 The assigned group name must already exist from the database. Assigning an unknown group name will return an error.
 
 #### @returns:
-Returns new user id on success or an error on failure.
+Returns new user id on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -49,7 +49,7 @@ Triggered whenever a new user is inserted into the database.
 
 The new user id.
 
-###### Usage:
+###### Sample Usage:
 ~~~~
 // Assuming you want to save the new user's id elsewhere
 // Add a callable function to do your stuff that will be called
@@ -85,25 +85,11 @@ Optional. Use only when updating the user's password.
 
 -- (string) `group`
 
-Optional. Use only when updating the user's group.
-
-#### @hooks
--- (event) `updatedUser`( int: ID, object: user)
-
-Triggered whenever user's data is updated in the database.
-
-#### Parameters:
--- (int) `ID`
-
-The id of the updated user.
-
--- (object) `user`
-
-The old user object data prior to update.
+Optional. Use only when reassigning user to a different group.
 
 #### @returns:
 
-Returns user ID on success or error object on failure.
+Returns user ID on success or error on failure.
 
 #### Usage:
 
@@ -121,27 +107,50 @@ if ( isError(userId) ) {
 }
 ~~~~
 
+#### @hooks
+-- (event) `updatedUser`( int: ID, object: user)
+
+Triggered whenever user's data is updated in the database.
+
+###### Parameters:
+-- (int) `ID`
+
+The updated user's id.
+
+-- (object) `user`
+
+An object containing the user's data before an update.
+
+###### Sample Usage:
+~~~~
+// Set a callable function that is called whenever a user
+// is updated
+const userUpdate = function(id, user) {
+    // Do your stuff here
+    ....
+};
+appEvent('updatedUser').set(userUpdate);
+~~~~
+
 async: getUserBy( string: column, string|int: value )
 -
-Retrieve user's data from the database base on the given column name and value.
+Get user's data from the database base on the given column name and value.
 
 ### Parameters:
 
 -- (string) `column`
 
-The users table column name, use to match the query.
-*Note: Only column names **ID** and **email** are allowed.*
+The name of the column to use to match the query. Options are *ID* | *email*.
 
 -- (string|int) `value`
 
-The value of the given column name.
+The corresponding value of the given column name.
 
 #### @returns:
 
-Returns user's data object on success or error.
+Returns an object containing user's data on success or error on failure.
 
 #### Usage:
-
 ~~~~
 let user = await getUserBy( 'email', 'natasha@awesomesite.com' );
 
@@ -151,6 +160,28 @@ if ( isError(user) ) {
     
     return;
 }
+~~~~
+
+#### @hooks
+-- (filter) async: `getUser`(object: *userData*)
+
+Fired whenever user is retrieve from the database.
+
+###### Parameter:
+-- (object) `userData`
+
+An object containing user's information.
+
+###### Sample Usage:
+~~~~
+// Set a rating level per user
+// * Always return the user object after manipulating
+const setUserRating = function(user) {
+    user.rating = 10;
+    
+    return user;
+};
+appFilter('getUser').set(setUserRating);
 ~~~~
 
 async: getUser( int: ID )
