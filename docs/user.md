@@ -21,7 +21,25 @@ Required. The name of the group assign to the user.
 
 The assigned group name must already exist from the database. Assigning an unknown group name will return an error.
 
-##### @hooks
+#### @returns:
+Returns new user id on success or an error on failure.
+
+#### Usage:
+~~~~
+let userId = await insertUser({
+    display: 'natasha',
+    email: 'natasha@awesomemail.com',
+    pass: 123456,
+    group: 'subscriber'
+});
+
+if ( isError(userId) ) {
+    // Print error message
+    console.log(userId.message);
+}
+~~~~
+
+#### @hooks
 -- (event) `insertedUser`( int: *ID* )
 
 Triggered whenever a new user is inserted into the database.
@@ -41,24 +59,6 @@ const myCustomFunc = function(id) {
     ....
 }
 appEvent('insertedUser').set(myCustomFunc);
-~~~~
-
-#### @returns:
-Returns new user id on success or an error on failure.
-
-#### Usage:
-~~~~
-let userId = await insertUser({
-    display: 'natasha',
-    email: 'natasha@awesomemail.com',
-    pass: 123456,
-    group: 'subscriber'
-});
-
-if ( isError(userId) ) {
-    // Print error message
-    console.log(userId.message);
-}
 ~~~~
 
 async: updateUser( object: *userData* )
