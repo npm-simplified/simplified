@@ -3,17 +3,21 @@ async: insertContentType( object: *contentTypeData* )
 Insert new content type into the database.
 
 #### Parameters: *contentTypeData*
+-- (string) `type`
+
+Required. The type of content to create at. Options are *content* | *group*. Default is *content*.
+
 -- (string) `name`
 
-The content type name.
+Required. The content type name.
 
 -- (string) `slug`
 
-A unique slug use as the content type's identifier.
+Required. A unique slug use as the content type's identifier.
 
 -- (string) `status`
 
-The content type status. Statuses are *active* | *inactive*.
+The content type status. Statuses selections are *active* | *inactive* | *builtin*. Default is active.
 
 -- (boolean) `hierarchical`
 
@@ -25,7 +29,7 @@ Set to true to enable public archive page, listing the contents of the content t
 
 -- (boolean) `page`
 
-Set to true to have content of the content type have individual pages.
+Set to true to enable individual content view per page.
 
 -- (boolean) `comments`
 
@@ -33,11 +37,12 @@ Set to true to allow comments posted to the content of the content type. Comment
 
 -- (boolean) `rest`
 
-Set to true to let contents of the content type queryable via REST API.
+Set to true to let contents of the content type queryable via REST API. For content type of type *group*, the parent content must be set to true for the
+contents of the content type to be included in REST query.
 
 -- (string) `archiveTitle`
 
-The content type archive title.
+The content type archive title. Required if *archive* is set to true.
 
 -- (string) `archiveDescription`
 
@@ -45,19 +50,21 @@ Optional. The content type's custom archive description.
 
 -- (string) `archiveSlug`
 
-Required. Use to construct the public archive route which handles the display of content listing.
+The content type's unique archive slug. Use to construct the public archive route. Default's content type slug.
 
 -- (int) `itemsPerPage`
 
-Required. The number of contents to display per page on public archive page.
+The number of contents to display per page. Default is 50.
 
 -- (array) `parents`
 
-An array of other content type slug where the content type is a descendant of. Usually use in content type of type group.
-
+Optional. An array of content type's slug where the content type is a descendant at. Required if the content type is of type `group`.
+ 
 -- (object) `fields`
 
 Optional. An object that defines the table structure of the contents of the content type.
+
+// @todo: Link content table structure definition
 
 #### @returns:
 Returns true on success or error on failure.
@@ -123,6 +130,10 @@ Updates content type in the database.
 
 Required. The content type's unique slug.
 
+-- (string) `type`
+
+Optional. Use only when changing the content type's type.
+
 -- (string) `name`
 
 Optional. Use only when updating the content type's name.
@@ -137,11 +148,11 @@ Optional. Use only when setting or disabling content's hierarchy.
 
 -- (boolean) `archive`
 
-Optional. Use only when setting or disabling the content type's archive.
+Optional. Use only when setting or disabling the content type's public archive.
 
 -- (boolean) `page`
 
-Optional. Use only when setting or disabling the content type's content page.
+Optional. Use only when setting or disabling content's individual page view.
 
 -- (boolean) `comments`
 
@@ -153,13 +164,13 @@ Optional. Use only when including or excluding the content type's contents in RE
 
 -- (array) `parents`
 
-Optional. Use only when updating the list of parents or remove parents of the content type.
+Optional. Use only when updating the list of parents of the content type.
 
 -- (object) `fields`
 
-Optional. Use only when resetting the content type's contents table structure.
+Optional. Use only when resetting the content's table structure of the content type.
 
-**oldSlug**
+**string**: **oldSlug**
 
 -- (string) `oldSlug`
 
@@ -184,7 +195,7 @@ if ( isError(blog) ) {
 #### @hooks:
 -- (event) `updatedContentType`(object: *contentTypeData*, object: *oldContentTypeData*)
 
-Triggered whenever a content type is updated in the database.
+Triggered whenever the content type is updated in the database.
 
 async: dropContentType( string: *slug* )
 -
@@ -211,12 +222,12 @@ if ( isError(drop) ) {
 #### @hooks:
 -- (event) `deletedContentType`(object: *contentTypeData*)
 
-Triggered whenever a content type is deleted from the database.
+Triggered whenever a content type is removed from the database.
 
 ###### Parameter:
 -- (object) `contentTypeData`
 
-An object containing the content type data before deletion.
+An object containing the content type's data before deletion.
 
 
 async: getContentType( string: *slug* )
@@ -230,7 +241,7 @@ Get content type from the database.
 Required. The content type's unique slug.
 
 #### @returns:
-Returns an object containing the content type's data or error on failure.
+Returns an object containing the content type's data on success or error on failure.
 
 #### Usage:
 ~~~~

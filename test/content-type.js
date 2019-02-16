@@ -3,8 +3,6 @@
 const assert = require('chai').assert,
     _ = require('underscore');
 
-require('../lib/load');
-
 describe('Content type queries', () => {
     it('Should create new content type table.', async function() {
         let done = await dbManager.createTable( 'content_type', {
@@ -76,10 +74,77 @@ describe('Content type queries', () => {
         return done;
     });
 
+    it('Should add new content type', async function() {
+        this.timeout(10000);
+
+        // Create blogs
+        let done = await insertContentType({
+            name: 'Blog',
+            slug: 'blog',
+            hierarchical: true,
+            archive: true,
+            page: true,
+            comments: true,
+            rest: true
+        });
+
+        assert.isTrue(done);
+
+        // Create categories
+        done = await insertContentType({
+            name: 'Categories',
+            slug: 'categories',
+            hierarchical: true,
+            type: 'group',
+            archive: true,
+            page: true,
+            parents: ['blog']
+        });
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should update content type', async function() {
+        this.timeout(5000);
+
+        let done = await updateContentType({
+            slug: 'blog',
+            // Disable comments
+            comments: false
+        });
+
+        assert.isTrue(done);
+
+        // Change content type slug
+        done = await updateContentType({
+            slug: 'category'
+        }, 'categories' );
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+
+    it('Should delete content type', async function() {
+        let done = await dropContentType('blog');
+
+        assert.isTrue(done);
+
+        done = await dropContentType('category');
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+
     it('Should drop content type table.', async function() {
         let done = await dbManager.dropTable('content_type');
 
-        assert.isTrue(done);
+        assert.isTrue(done.affectedRows > 0);
 
         return done;
     });
