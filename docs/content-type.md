@@ -270,11 +270,11 @@ Optional. The content type status.
 
 -- (array) `status__in`
 
-Optional. An array of content type statuses to base the return results from.
+Optional. An array of content type status where the return content types status must be within the list.
 
 -- (array) `status__not_in`
 
-Optional. An array of content type statuses where the return results is neither have the list of statuses.
-
+Optional. An array of content status where the return content types status must NOT be in the list.
+ 
 #### @returns
-Returns an array of content type object.
+Returns an array of content type object on success or empty array on failure.
