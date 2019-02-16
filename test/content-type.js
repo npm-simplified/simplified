@@ -135,8 +135,70 @@ describe('Content type queries', () => {
         return types;
     });
 
+    let contentId, id2;
+
+    it('Should insert new content', async function() {
+        contentId = await insertContent({
+            type: 'blog',
+            title: 'My Funny Valentines',
+            status: 'public'
+        });
+
+        assert.isNumber(contentId);
+
+        id2 = await insertContent({
+            type: 'category',
+            name: 'Apple'
+        });
+
+        assert.isNumber(id2);
+
+        return contentId;
+    });
+
+    it('Should update content', async function() {
+        let done = await updateContent({
+            ID: id2,
+            type: 'category',
+            slug: 'apple-tree'
+        });
+
+        assert.equal( done, id2 );
+
+        return done;
+    });
+
+    it('Should get content from the database', async function() {
+        let content = await getContent( contentId, 'blog' );
+
+        assert.isObject(content);
+        assert.equal(content.ID, contentId);
+
+        content = await getContentBy( 'slug', 'apple-tree', 'category' );
+
+        assert.isObject(content);
+        assert.equal(content.ID, id2);
+
+        return content;
+    });
+
+    it('Should delete content', async function() {
+        let done = await dropContent( 'category', id2 );
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should get contents', async function() {
+        let contents = await contentQuery({type: 'blog'});
+
+        return contents;
+    });
 
     it('Should delete content type', async function() {
+        this.timeout(15000);
+
         let done = await dropContentType('blog');
 
         assert.isTrue(done);

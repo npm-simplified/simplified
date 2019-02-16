@@ -6,25 +6,29 @@ Insert new content into the database.
 
 -- (string) `type`
 
-Required. The content type unique slug.
+Required. The content type's unique slug.
 
--- (string) `slug`
+The contentData object properties may vary depending on what was set on the content
+type's *fields* properties. The *fields* properties is what constructed the content's table structure. Below are the default
+*fields* properties according to it's type.
 
-Required. The content's unique slug.
-
-###### Default parameters for content of type *content*:
+###### Parameters for content type of type *content*:
 
 -- (string) `title`
 
 The content title.
 
+-- (string) `slug`
+
+The content's unique slug. Default is the generated slug from the content's title.
+
 -- (string) `status`
 
-The content status. Options are (*public*|*private*|*pending*|*draft*). Default is *pending*.
+The content status. Options are (*public* | *private* | *pending* | *draft*). Default is *draft*.
 
 -- (string) `summary`
 
-Optional. A short, not more than 255 characters content summary.
+A short summary, not more than 255 characters.
 
 -- (string) `description`
 
@@ -32,33 +36,36 @@ The content's full description.
 
 -- (int) `author`
 
-The id of the user whom the content author.
+The user id of the content author. Default is current user's id.
 
 -- (int) `parent`
 
-Optional. The id of the content where the content is a descendant of.
+The content's parent id.
 
 -- (string) `comment`
 
 The content's comment status. Options are: *open* | *close* | *disabled*. Default is *open*.
 
-
-###### Default parameters for content of type *group*:
+###### Parameters for content type of type *group*:
 
 -- (string) `name`
 
-Required. The content group name.
+Required. The content's name.
+
+-- (string) `slug`
+
+The content's unique slug. Default is a generated slug from the content's name.
 
 -- (string) `description`
 
-Optional. The group's description consisting of at most 255 characters.
+The content's description consisting of at most 255 characters.
 
 -- (string) `parent`
 
-Optional. The id of the content where the content is a descendant of.
+The content's parent id.
 
 #### @returns:
-Returns content id on success or error object on failure.
+Returns content id on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -103,11 +110,11 @@ The new content id.
 
 -- (object) `contentTypeData`
 
-An object containing the content's content type data.
+An object containing the content type's data.
+
 
 async: updateContent( object: *contentData* )
 -
-
 Update content in the database.
 
 #### Parameter: *contentData*
@@ -120,15 +127,19 @@ Required. The content type unique slug.
 
 Required. The id of the content to update at.
  
-###### Default parameters for content of type *content*:
+###### Parameters for content type of type *content*:
 
 -- (string) `title`
 
 Optional. Use only when updating the content title.
 
+-- (string) `slug`
+
+Optional. Use only when updating the content's unique slug.
+
 -- (string) `status`
 
-Optional. Use only when changing the content status.
+Optional. Use only when changing the content's status.
 
 -- (string) `summary`
 
@@ -150,11 +161,15 @@ Optional. Use only when changing the content's parent.
 
 Optional. Use only when changing the content's comment status.
 
-###### Default parameters for content of type *group*:
+###### Parameters for content type of type *group*:
 
 -- (string) `name`
 
 Optional. Use only when updating the content's name.
+
+-- (string) `slug`
+
+Optional. Use only when updating the content's unique slug.
 
 -- (string) `description`
 
@@ -165,7 +180,7 @@ Optional. Use only when updating the content's description.
 Optional. Use only when changing the content's parent.
 
 #### @returns:
-Returns content id on success or error object on failure.
+Returns content id on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -213,16 +228,13 @@ An object containing the content data before an update.
 
 An object containing the content's content type data.
 
-async: getContentBy( string: *type*, string: *column*, any: *value* )
+
+async: getContentBy( string: *column*, any: *value*, string: *type* )
 -
 
 Get content from the database base on the given column name and value.
 
 #### Parameters:
-
--- (string) `type`
-
-Required. The content type slug.
 
 -- (string) `column`
 
@@ -231,6 +243,10 @@ Required. The column name to base the query at. Allowed columns are *ID* and *sl
 -- (string|int) `value`
 
 Required. The corresponding value of the given column name.
+
+-- (string) `type`
+
+Required. The content type's unique slug.
 
 #### @returns
 Returns an object containing the content data on success or error on failure. 
@@ -257,16 +273,20 @@ if ( isError(category) ) {
 #### @hooks:
 -- (filter) `getContent`(object: *contentData*, object: *contentTypeData*)
 
-Called whenever a content is retrieve from the database.
+Called whenever a content is retrieve from the database. This filter hook is fired to filter
+the content data object before returning.
 
 ###### Parameters:
--- (object) `content`
+-- (object) `contentData`
 
 The content object.
 
 -- (object) `contentTypeData`
 
-An object containing the content's content type data.
+An object containing the content type data.
+
+###### @returns:
+Returns the content object.
 
 ###### Sample Usage:
 ~~~~
@@ -283,19 +303,19 @@ const myVar = (content, contentTypeData) => {
 appFilter('getContent').set(myVar);
 ~~~~
 
-async: getContent( string: *type*, int: *ID* )
+async: getContent( int: *ID*, string: *type* )
 -
 A convenient way to get the content data base on content id.
 
 #### Parameters:
 
--- (string) `type`
-
-Required. The content type slug.
-
 -- (int) `ID`
 
-Required. The id of the content to get the data at.
+Required. The content id.
+
+-- (string) `type`
+
+Required. The content type's unique slug.
 
 #### @returns
 Returns content object on success or error on failure.
@@ -318,11 +338,10 @@ Remove the content from the database.
 
 -- (string) `type`
 
-Required. The content type slug.
+Required. The content type's unique slug.
 
 -- (int) `ID`
-
-Required. The id of the content to remove at.
+Required. The content id.
 
 #### @returns:
 Returns true on success or error on failure.
@@ -360,15 +379,15 @@ Get contents from the database base.
 
 -- (string) `type`
 
-Required. The content type slug.
+Required. The content type's unique slug.
 
 -- (array) `within`
 
-Optional. An array of content ID where the return results must be within the specified list.
+Optional. An array of content ID where the return results id must be within the list.
 
 -- (array) `not__within`
 
-Optional. An array of content ID which should be excluded in the query.
+Optional. An array of content ID which are be excluded in the query.
 
 -- (int) `page`
 
@@ -376,7 +395,19 @@ Optional. The page number use as the start position in the query.
 
 -- (int) `perPage`
 
-Optional. The number of items of the return contents.
+Optional. The number of contents to return in the query.
+
+-- (string) `orderBy`
+
+Optional. The content table's column name.
+
+-- (string) `order`
+
+Optional. The order to which the contents is return to. Default is *asc* (ascending).
+
+-- (object) `meta`
+
+Optional. The content's metadata.
 
 // @todo: Define how queries are set.
 
