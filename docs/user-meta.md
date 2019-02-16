@@ -92,6 +92,7 @@ Optional. The name of the metadata to remove at. If omitted, will remove all of 
 -- (any) `value`
 
 Optional. The value of the metadata to remove at. If set, will only remove metadata with a match value. Omitting this parameter will remove all metadata matching the given metadata name.
+
 #### @returns:
 Returns true on success or error on failure.
 

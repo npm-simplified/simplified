@@ -127,6 +127,14 @@ describe('Content type queries', () => {
         return done;
     });
 
+    it('Should get all content types', async function() {
+        let types = await getContentTypes();
+
+        assert.equal( types.length, 2 );
+
+        return types;
+    });
+
 
     it('Should delete content type', async function() {
         let done = await dropContentType('blog');
