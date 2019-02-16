@@ -99,7 +99,39 @@ describe('User Queries', () => {
 
         assert.isTrue(done);
 
+        done = await insertUserGroup( 'pakals', ['eating'] );
+
         return done;
+    });
+
+    it('Should update user group', async function() {
+        // Change group's name
+        let done = await updateUserGroup( 'honest', ['eating', 'generous'], 'pakals');
+
+        assert.isTrue(done);
+
+        let group = await getUserGroup( 'honest' );
+
+        assert.isObject(group);
+        assert.equal( group.name, 'honest' );
+
+        return done;
+    });
+
+    it('Should delete user group', async function() {
+        let done = await dropUserGroup('honest');
+
+        assert.isTrue(done);
+
+        return done;
+    });
+
+    it('Should get the list of user groups', async function() {
+        let groups = await getUserGroups();
+
+        assert.equal( groups.length, 3 );
+
+        return groups;
     });
 
     let userId, user2, user3;

@@ -6,11 +6,11 @@ Insert new user group into the database.
 
 -- (string) `name`
 
-Required. The user group's name.
+Required. The name of the group.
 
 -- (array) `grants`
 
-An array of permissions granted to the group.
+Required. An array of permissions granted to the group.
 
 #### @returns:
 Returns true on success or error on failure.
@@ -41,8 +41,9 @@ Update user group in the database.
 #### Parameters:
 -- (string) `name`
 
-Required. The name of the group to update to. If the name of the group is different from what was
-previously set, the old group's name must be set as the third parameter of the function.
+Required. The name of the group to update to. If the group's name
+is different from what was previously set, the old group name must
+be set as the third parameter.
 
 -- (array) `grants`
 
@@ -91,7 +92,7 @@ Get the user group's data from the database.
 Required. The name of the group to get the data at.
 
 #### @returns:
-Returns an object containing the user group's data or error on failure.
+Returns an object containing the user group's data on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -107,8 +108,7 @@ if ( isError(group) ) {
 #### @hooks:
 -- (filter) `userUserGroup`( object: *group* )
 
-Called before returning the user's group data. This filter is fired to allow filtering
-of the user's group data object.
+Called before returning the user's group data. This filter is fired whenever a user group is retrieve to allow filtering of the user group's data object.
 
 async: dropUserGroup( string: *name* )
 -
@@ -118,7 +118,7 @@ Remove user group from the database.
 
 -- (string) `name`
 
-The name of the group to remove at.
+Required. The name of the group to remove at.
 
 ### @returns:
 Returns true on success or error on failure.
@@ -135,7 +135,7 @@ if ( isError(deleted) ) {
 #### @hooks:
 -- (event) `deletedUserGroup`( object: *group*)
 
-Triggered every time a user group is deleted from the database.
+Triggered whenever a user group is deleted from the database.
 
 ###### Parameter:
 -- (object) `group`
@@ -145,7 +145,10 @@ An object containing the user's group data before deletion.
 async: getUserGroups(void)
 -
 
-Get the list of users group from the database.
+Get the list of user groups from the database.
+
+#### @returns:
+Returns an array of user group or empty array on failure.
 
 #### Usage:
 ~~~~
