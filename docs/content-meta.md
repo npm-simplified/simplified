@@ -1,17 +1,17 @@
 async: setContentMeta( string: *type*, int: *contentId*, string: *name*, any: *value*, boolean: *single*, string: *oldMetaName* )
 -
 
-Insert or update a content's metadata into the database.
+Insert or update a content's metadata in the database.
 
 #### Parameters:
 
 -- (string) `type`
 
-Required. The content type slug.
+Required. The content type's unique slug.
 
 -- (int) `contentId`
 
-Required. The id of the content to insert or update the metadata at.
+Required. The content id to insert or update the metadata to.
 
 -- (string) `name`
 
@@ -23,7 +23,7 @@ Required. The metadata value.
 
 -- (boolean) `single`
 
-Optional. Use to specify that the metadata should only have one value.
+Optional. Use to specify that the metadata should only have a single value.
 
 -- (string) `oldMetaName`
 
@@ -63,7 +63,7 @@ Required. The content type slug
 
 -- (int) `contentId`
 
-Required. The content id.
+Required. The content id to remove the metadata from.
 
 -- (string) `name`
 
@@ -128,7 +128,7 @@ Optional. The name of the metadata to get the value at. If omitted, will return 
 Optional. Set this to true to return the single metadata value. False will return an array of values.
 
 #### @returns:
-The return result varies depending on the parameters set and the type of corresponding metadata value. Otherwise, will return an error on failure.
+The return result varies depending on the set parameters. Otherwise will return an error on failure.
 
 #### Usage:
 ~~~~

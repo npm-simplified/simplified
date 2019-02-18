@@ -182,6 +182,16 @@ describe('Content type queries', () => {
         return content;
     });
 
+    it('Should set content metadata', async function() {
+        let done = await setContentMeta( 'blog', contentId, 'meta1', true );
+
+        assert.isTrue(done);
+
+        //let meta = await getContentMeta( 'blog', contentId );
+
+        return done;
+    });
+
     it('Should delete content', async function() {
         let done = await dropContent( 'category', id2 );
 
