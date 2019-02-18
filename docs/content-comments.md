@@ -1,4 +1,4 @@
-async: insertComment( object: commentData )
+async: insertComment( object: *commentData* )
 -
 Insert new comment into the database.
 
@@ -6,7 +6,7 @@ Insert new comment into the database.
 
 -- (string) `type`
 
-Required. The content type slug.
+Required. The content type's unique slug.
 
 -- (int) `contentId`
 
@@ -18,25 +18,23 @@ Required. The posted comment message.
 
 -- (string) `status`
 
-Required. The status of the posted comment. Statuses options are: *approved* | *pending* | *spam*
+Required. The comment's status. Available statuses are: *approved* | *pending* | *spam*. Default's *pending*.
 
 -- (int) `authorId`
 
 Optional. The id of the user whom posted the comment.
 
-*If a user is currently logged in, the current user id will automatically use.*
-
 -- (string) `author`
 
-Required for non-logged-in user. The name of commentator.
+The comment's author name. Required for non-logged-in user.
 
 -- (string) `authorEmail`
 
-Required for non-logged-in user. The commentator's email address.
+The comment's author email address. Required for non-logged-in user.
 
 -- (string) `authorUrl`
 
-Optional. The commentator's website link.
+Optional. The comment's author url.
 
 #### @returns:
 Returns new comment id on success or error on failure.
@@ -56,24 +54,42 @@ if ( isError(commentId) ) {
 }
 ~~~~
 
-async: updateComment( object: commentData )
+#### @hooks:
+-- (event) `insertedComment`(int: *ID*, int: *contentId*, string: *type*)
+
+Triggered whenever a new comment is inserted into the database.
+
+###### Parameters:
+-- (int) `ID`
+
+The new comment id.
+
+-- (int) `contentId`
+
+The content id where the comment is posted.
+
+-- (string) `type`
+
+The content type's unique slug.
+
+async: updateComment( object: *commentData* )
 -
 
-Update an existing data in the database.
+Update comment in the database.
 
 #### Parameters:
 
 -- (string) `type`
 
-Required. The content type slug.
+Required. The content type's unique slug.
 
 -- (int) `contentId`
 
-Required. The content id where the comment posted.
+Required. The content id where the comment was posted.
 
 -- (int) `ID`
 
-Required. The id of the comment to update to.
+Required. The comment id to update at.
 
 -- (string) `status`
 
@@ -85,19 +101,19 @@ Optional. Use only when updating the posted comment.
 
 -- (int) `authorId`
 
-Optional. Use only when updating the comment author id.
+Optional. Use only when changing the comment's author.
 
 -- (string) `author`
 
-Optional. Use only when updating the comment's author name.
+Optional. Use only when changing the comment author's name.
 
 -- (string) `authorEmail`
 
-Optional. Use only when updating the comment's author email address.
+Optional. Use only when changing the comment author's email address.
 
 -- (string) `authorUrl`
 
-Optional. Use only when updating the comment's author link.
+Optional. Use only when changing the comment author's url.
 
 #### @returns:
 Returns true on success or error on failure.
@@ -117,22 +133,40 @@ if ( isError(update) ) {
 }
 ~~~~
 
-async: getComment( string: type, int: commentId )
--
-Get the comment data from the database.
+#### @hooks:
+-- (event) `updatedComment`(int: *ID*, int: *contentId*, string: *type*)
 
-#### Parameters:
+Triggered whenever a comment is updated in the database.
+
+###### Parameters:
+-- (int) `ID`
+
+The comment's id.
+
+-- (int) `contentId`
+
+The content id where the comment was posted.
 
 -- (string) `type`
 
-Required. The content type slug.
+The content type's unique slug.
+
+async: getComment( int: *commentId*, string: *type* )
+-
+Get comment data from the database.
+
+#### Parameters:
 
 -- (int) `commentId`
 
-Required. The id of the comment to retrieve to.
+Required. The comment id to get at.
+
+-- (string) `type`
+
+Required. The content type's unique slug.
 
 #### @returns:
-Returns comment object on success or error onn failure.
+Returns comment object on success or error on failure.
 
 #### Usage:
 ~~~~
@@ -144,19 +178,33 @@ if ( isError(comment) ) {
 }
 ~~~~
 
-async: dropComment( string: type, int: commentId )
+#### @hooks:
+-- (filter) `getComment`(object: *commentData*, string: *type* )
+
+Called whenever a comment is retrieve from the database.
+
+###### Parameters:
+-- (object) `commentData`
+
+The comment data object.
+
+-- (string) `type`
+
+The content type's unique slug.
+
+async: dropComment( int: *commentId*, string: *type* )
 -
 Remove comment from the database.
 
 ### Parameters:
 
--- (string) `type`
-
-Required. The content type slug.
-
 -- (int) `commentId`
 
 Required. The id of the comment to remove to.
+
+-- (string) `type`
+
+Required. The content type's unique slug.
 
 #### Usage:
 ~~~~
@@ -168,15 +216,29 @@ if ( isError(deleted) ) {
 }
 ~~~~
 
-async: commentsQuery( object: queryFilter )
--
-Retrieve comments from the database.
+#### @hooks:
+-- (event) `deletedComment`(object: *commentData*, string: *type*)
 
-#### Parameters: *queryFilter*
+Triggered whenever a comment is deleted from the database.
+
+###### Parameters:
+-- (object) `commentData`
+
+The deleted comment data object.
 
 -- (string) `type`
 
-Required. The content type slug.
+The content type's unique slug.
+
+async: commentsQuery( object: *queryFilter* )
+-
+Get comments from the database.
+
+#### Parameter: *queryFilter*
+
+-- (string) `type`
+
+Required. The content type's unique slug.
 
 -- (int) `contentId`
 
@@ -184,19 +246,19 @@ Required. The content id where the comments are posted at.
 
 -- (string) `status`
 
-Optional. The status of the comments to retrieve at.
+Optional. The comment status.
 
 -- (array) `status__in`
 
-Optional. An array of comment statuses to retrieve at.
+Optional. An array of statuses that a comment must have.
 
 -- (array) `status__not_in`
 
-Optional. An array of comment statuses where the return results comment status is not among the list.
+Optional. An array of statuses where the return results status is not among the list.
 
 -- (int|string) author
 
-Optional. The commentator's user id or the commentator name.
+Optional. The comment's author id or name.
 
 -- (int) `page`
 
@@ -204,7 +266,7 @@ Optional. The page number use as the start position of the return results.
 
 -- (int) `perPage`
 
-Optional. The number of items of the return results.
+Optional. The number of comments to get to.
 
 #### @returns
 Returns an object containing the total number of comments found and an array of comments.
@@ -216,6 +278,11 @@ let query = await commentsQuery( {type: 'blogs', contentId: 1} );
 // Sample return results
 {foundItems: 50, comments: [....]}
 ~~~~
+
+#### @hooks:
+-- (filter) `getComment`(object: *commentData*, string: *type*)
+
+Filters all the found comments in the query.
 
 async: getComments( string: type, int: contentId )
 -

@@ -185,4 +185,3 @@ Required. A raw query statement. The statement varies depending on the type of d
 -- (any) `options`
 
 Optional. A formatting structure or any additional options which supports the raw query statement.
-
