@@ -1,20 +1,25 @@
 # Functions & Definitions
 
+---
+### Application Properties
+
+----
+
 async: getProperty( string: *name*, any: *$default* )
 -
 Get the property value from the database.
 
-##### Parameters:
+#### Parameters:
 
 -- (string) `name`
 
-The property name to get from the database.
+The property name to get value at.
 
 -- (any) `$default`
 
-The default value if a property does not exist.
+The property's default value.
 
-##### @returns:
+#### @returns:
 Returns property value on success or the default value on failure.
 
 ##### Usage:
@@ -25,7 +30,7 @@ let appTitle = await getProperty( 'appTitle', 'An Awesome App' );
 console.log(appTitle); 
 ~~~~
 
-async: setProperty( string: name, any: value, string: oldName )
+async: setProperty( string: *name*, any: *value*, string: *oldName() )
 -
 Insert or update a property value into the database.
 
@@ -33,15 +38,15 @@ Insert or update a property value into the database.
 
 -- (string) `name`
 
-The property name to insert or update into the database.
+The property name to insert or update into.
 
 -- (any) `value`
 
-The property value to insert or update into the database.
+The value of the property to insert or update to.
 
 -- (string) `oldName`
 
-Optional. Use only when changing the name of the property.
+Optional. Use only when changing the property name.
 
 ##### @returns:
 Returns true on success or error on failure.
@@ -65,7 +70,7 @@ if ( isError(update) ) {
 }
 ~~~~
 
-async: dropProperty( string: name )
+async: dropProperty( string: *name* )
 -
 Remove a property from the database.
 
@@ -89,28 +94,26 @@ if ( isError(drop) ) {
 ~~~~
 
 ---
-## Routing
+### Routes
 
-setAdminView( string: *route*, function: *getCallback*, function: *postCallback*, boolean: *requireLogin*, string: *permission* )
+---
+
+setAdminView( string: *route*, function: *getCallback*, boolean: *requireLogin*, string: *permission*, function: *postCallback* )
 -
 
-Sets or update an admin view route.
+Creates page view in administrative area.
 
 #### Parameters:
 
 -- (string) `route`
 
-The route path end point use to listen in the request.
+The route path endpoint use to listen the request.
 
 -- (function) `callback`
 
-A callable function which handles the **request** and **response** object.
+A callable function which handles the request. The function receives two parameters, the *request* and *response* object.
 
 Example: myPage( object: *request*, object: *response*)
-
--- (function) `postCallback`
-
-Optional. Handles the reponse for a POST request.
 
 -- (boolean) `requireLogin`
 
@@ -119,6 +122,10 @@ Optional. Set to true to force user to be login to view the page.
 -- (string|array) `permission`
 
 The type or types of permissions a user have granted to access the page.
+
+-- (function) `postCallback`
+
+Optional. Handles the response for a POST request.
 
 #### @returns:
 Returns true on success or false on failure.

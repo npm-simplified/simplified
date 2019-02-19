@@ -20,7 +20,7 @@ describe('Database Queries', () => {
         }
     };
 
-    it('Should database configuration', async function() {
+    it('Should check database configuration', async function() {
         let done = await dbManager.configure();
 
         return done;

@@ -7,9 +7,9 @@
     "test": "mocha"
   },
   "bin": {
-    "smjs": "./bin/database",
-    "smjs install": "./bin/install",
-    "smjs add-user": "./bin/add-user"
+    "smjs-install": "./bin/install.js",
+    "smjs-install-database": "./bin/database.js",
+    "smjs": "./bin/add-user.js"
   },
   "keywords": [],
   "author": "nazzy",
